@@ -21,7 +21,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    Fragment fragment1,fragment2;
+    Fragment fragment1,fragment2,fragment3;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +31,7 @@ public class HomeActivity extends AppCompatActivity {
 
         fragment1 = new list_frag();
         fragment2 = new Homefrag();
+        fragment3 = new gps1();
         bottomNavigationView = findViewById(R.id.navigation);
         menu = bottomNavigationView.getMenu();
         bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());
@@ -85,6 +86,17 @@ public class HomeActivity extends AppCompatActivity {
                     intent = new Intent(HomeActivity.this,CameraActivity.class);
                     startActivity(intent);
 
+                    break;
+                case R.id.gps:
+                    menuItem.setIcon(R.drawable.ic_place_24px);    // 선택한 이미지 변경
+                    menu.findItem(R.id.list).setIcon(R.drawable.ic_list_24px);
+                    menu.findItem(R.id.home).setIcon(R.drawable.ic_home_24px);
+                    menu.findItem(R.id.camera).setIcon(R.drawable.ic_camera_alt_24px);
+                    //intent = new Intent(HomeActivity.this,gps.class);
+                    //startActivity(intent);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.m2frame,fragment3).commitAllowingStateLoss();
+
+                    break;
 
             }// switch()..
 

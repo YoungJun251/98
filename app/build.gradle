@@ -57,6 +57,8 @@ dependencies {
     implementation 'gun0912.ted:tedpermission:2.0.0'// 권한 허용을 위해
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0' // google service library
 
 
 
