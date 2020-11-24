@@ -3,6 +3,7 @@ package com.example.team98;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,6 +25,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.bumptech.glide.Glide;
@@ -59,8 +62,11 @@ import java.util.Date;
 import java.util.List;
 
 public class CameraActivity extends AppCompatActivity {
+    private static final int REQUEST_FILE = 10;
+    private static final int PERMISSION_FILE = 20;
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     public static Uri photoUri;
+    public static Uri uri;
     public String imageFilePath;
     private ProgressDialog dialog;
     private StorageReference mStorageRef;
@@ -68,7 +74,9 @@ public class CameraActivity extends AppCompatActivity {
     private Interpreter interpreter;
     private View v;
     public TextView textView;
-    public Button b;
+    public Button find_img;
+    public ImageView imageView;
+
     FirebaseCustomRemoteModel remoteModel =
             new FirebaseCustomRemoteModel.Builder("good_model").build(); // 객체 생성
     FirebaseModelDownloadConditions conditions = new FirebaseModelDownloadConditions.Builder()
@@ -82,7 +90,8 @@ public class CameraActivity extends AppCompatActivity {
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         textView = findViewById(R.id.textView);
-        b = findViewById(R.id.find_img);
+        find_img = findViewById(R.id.find_img);
+        imageView = findViewById(R.id.iv_result);
 
         FirebaseModelManager.getInstance().download(remoteModel, conditions)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -92,6 +101,7 @@ public class CameraActivity extends AppCompatActivity {
                     }
                 });
         Log.i("1","*************CCCCC*************");
+
         //권한 체크
         TedPermission.with(getApplicationContext())
                 .setPermissionListener(permissionListener)
@@ -102,14 +112,18 @@ public class CameraActivity extends AppCompatActivity {
         dialog = new ProgressDialog(this);
 
 
-        b.setOnClickListener(new View.OnClickListener() {
+        find_img.setOnClickListener(new View.OnClickListener() { //갤러리 찾기
             @Override
             public void onClick(View v) {
-
-                setLabelerFromLocalModel(photoUri, imageFilePath);
+                if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_FILE);
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setType("image/*");
+                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_FILE);
+                }
             }
         });
-
 
         //btn 클릭시 action
         findViewById(R.id.btn_capture).setOnClickListener(new View.OnClickListener() {
@@ -138,6 +152,51 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode){
+                case REQUEST_FILE: //find_img
+                    uri = data.getData();
+                    setLabelerFromLocalModel(uri);
+                    textView.setText("");
+                    imageView.setImageURI(uri);
+                    break;
+
+                case REQUEST_IMAGE_CAPTURE: //camera 동작
+                    File imgFile = new File(imageFilePath);
+                    uri = Uri.fromFile(imgFile);
+
+                    Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+                    ExifInterface exif = null;
+
+                    try {
+                        exif = new ExifInterface(imageFilePath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    int exifOrientation;
+                    int exifDegree;
+
+                    if (exif != null) {
+                        exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                        exifDegree = exifOrientationToDegress(exifOrientation);
+                    } else {
+                        exifDegree = 0;
+                    }
+
+                    ((ImageView) findViewById(R.id.iv_result)).setImageBitmap(rotate(bitmap, exifDegree));
+
+                    setLabelerFromLocalModel(uri);
+                    textView.setText("");
+                    imageView.setImageURI(uri);
+                    break;
+            }
+
+        }
+    }
 
 
     //이미지 파일 이름을 중복되지않게 생성
@@ -154,83 +213,54 @@ public class CameraActivity extends AppCompatActivity {
         return image;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-            ExifInterface exif = null;
 
-            try {
-                exif = new ExifInterface(imageFilePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            int exifOrientation;
-            int exifDegree;
-
-            if (exif != null) {
-                exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                exifDegree = exifOrientationToDegress(exifOrientation);
-            } else {
-                exifDegree = 0;
-            }
-
-            ((ImageView) findViewById(R.id.iv_result)).setImageBitmap(rotate(bitmap, exifDegree));
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-
-    }
-
-
-    private void setLabelerFromLocalModel(Uri photoUri, String imageFilePath) {
-        Bitmap temp = BitmapFactory.decodeResource(getResources(), R.drawable.makkne1);
+    private void setLabelerFromLocalModel(Uri photoUri) {
         showProgressDialog();
         FirebaseModelManager.getInstance().getLatestModelFile(remoteModel)
                 .addOnCompleteListener(new OnCompleteListener<File>() { //TensorFlow Lite Interpreter 과정
                     @Override
                     public void onComplete(@NonNull Task<File> task) {
-                        System.out.println(task);
-                        System.out.println(remoteModel);
-                        System.out.println(conditions);
                         File modelFile = task.getResult();
                         if (modelFile != null) {
                             // Instantiate an org.tensorflow.lite.Interpreter object.
                             interpreter = new Interpreter(modelFile);
                             BitmapFactory.Options options = new BitmapFactory.Options();    //이미지 비트맵으로 변환 과정
                             options.inSampleSize = 4;
-                            //String str = photoUri.toString();
-                            //Bitmap src = BitmapFactory.decodeFile(imageFilePath, options);
-                            Bitmap bitmap = Bitmap.createScaledBitmap(temp, 224, 224, true);
-                            int inBufferSize = 1 * 224*3*224* java.lang.Float.SIZE / java.lang.Byte.SIZE;
-                            ByteBuffer input = ByteBuffer.allocateDirect(inBufferSize).order(ByteOrder.nativeOrder());
-                            for (int y = 0; y < 224; y++) {
-                                for (int x = 0; x < 224; x++) {
-                                    int px = bitmap.getPixel(x, y);
-                                    // Get channel values from the pixel value.
-                                    int r = Color.red(px);
-                                    int g = Color.green(px);
-                                    int b = Color.blue(px);
+                            try {
+                                Bitmap bm = MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri);
+                                Bitmap bitmap = Bitmap.createScaledBitmap(bm, 224, 224, true);
+                                int inBufferSize = 1 * 224*3*224* java.lang.Float.SIZE / java.lang.Byte.SIZE;
+                                ByteBuffer input = ByteBuffer.allocateDirect(inBufferSize).order(ByteOrder.nativeOrder());
+                                for (int y = 0; y < 224; y++) {
+                                    for (int x = 0; x < 224; x++) {
+                                        int px = bitmap.getPixel(x, y);
+                                        // Get channel values from the pixel value.
+                                        int r = Color.red(px);
+                                        int g = Color.green(px);
+                                        int b = Color.blue(px);
 
-                                    // Normalize channel values to [-1.0, 1.0]. This requirement depends
-                                    // on the model. For example, some models might require values to be
-                                    // normalized to the range [0.0, 1.0] instead.
-                                    float rf = (r - 127) / 255.0f;
-                                    float gf = (g - 127) / 255.0f;
-                                    float bf = (b - 127) / 255.0f;
+                                        // Normalize channel values to [-1.0, 1.0]. This requirement depends
+                                        // on the model. For example, some models might require values to be
+                                        // normalized to the range [0.0, 1.0] instead.
+                                        float rf = (r - 127) / 255.0f;
+                                        float gf = (g - 127) / 255.0f;
+                                        float bf = (b - 127) / 255.0f;
 
-                                    input.putFloat(rf);
-                                    input.putFloat(gf);
-                                    input.putFloat(bf);
+                                        input.putFloat(rf);
+                                        input.putFloat(gf);
+                                        input.putFloat(bf);
+                                    }
                                 }
+
+                                int bufferSize = 4 * java.lang.Float.SIZE / java.lang.Byte.SIZE;
+                                ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
+                                modelRun(modelOutput, input);
+
+                                System.out.println("2");
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
 
-                            int bufferSize = 4 * java.lang.Float.SIZE / java.lang.Byte.SIZE;
-                            ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
-                            modelRun(modelOutput, input);
-
-                            System.out.println("2");
                         } else {
                             System.out.println("test");
                         }
@@ -243,6 +273,7 @@ public class CameraActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         dialog.show();
     }
+
     private void modelRun(ByteBuffer modelOutput, ByteBuffer input){
         interpreter.run(input, modelOutput);
         modelOutput.rewind();
@@ -266,25 +297,6 @@ public class CameraActivity extends AppCompatActivity {
         dialog.cancel();
     }
 
-    public void clickUpload(View v){
-        FirebaseStorage firebaseStorage= FirebaseStorage.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");
-        String filename= sdf.format(new Date())+ ".png";
-        StorageReference imgRef= firebaseStorage.getReference("uploads/"+filename);
-        imgRef.putFile(photoUri);
-
-    }
-    public void find_img(View v){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, 1);
-
-        textView.setText("");
-        System.out.println(photoUri);
-        setLabelerFromLocalModel(photoUri, imageFilePath);
-
-    }
 
 
     private int exifOrientationToDegress(int exifOrientation)   //이미지 회전 부분(가로로 찍거나 세로로 찍어도 회전변환해줌)
@@ -322,100 +334,6 @@ public class CameraActivity extends AppCompatActivity {
 
         }
     };
-    /*public void clicked(View v) {
 
-
-        FirebaseModelManager.getInstance().getLatestModelFile(remoteModel)
-                .addOnCompleteListener(new OnCompleteListener<File>() { //TensorFlow Lite Interpreter 과정
-                    @Override
-                    public void onComplete(@NonNull Task<File> task) {
-                        File modelFile = task.getResult();
-                        if (modelFile != null) {
-                            // Instantiate an org.tensorflow.lite.Interpreter object.
-                            interpreter = new Interpreter(modelFile);
-                            System.out.println("2");
-                        } else {
-                            System.out.println("test");
-                        }
-                    }
-                });
-
-
-        FirebaseModelManager.getInstance().download(remoteModel, conditions)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    final TextView tv_output = findViewById(R.id.textView);
-                    @Override
-                    public void onSuccess(Void v) {
-                        System.out.println("1");
-                        // Download complete. Depending on your app, you could enable
-                        // the ML feature, or switch from the local model to the remote
-                        // model, etc.
-                        BitmapFactory.Options options = new BitmapFactory.Options();    //이미지 비트맵으로 변환 과정
-                        options.inSampleSize = 4;
-                        Bitmap src = BitmapFactory.decodeFile(imageFilePath, options);
-                        Bitmap bitmap = Bitmap.createScaledBitmap(src, 7, 7, true);
-                        ByteBuffer input = ByteBuffer.allocateDirect(7 * 7 * 512 * 4).order(ByteOrder.nativeOrder());
-                        for (int y = 0; y < 7; y++) {
-                            for (int x = 0; x < 7; x++) {
-                                int px = bitmap.getPixel(x, y);
-                                // Get channel values from the pixel value.
-                                int r = Color.red(px);
-                                int g = Color.green(px);
-                                int b = Color.blue(px);
-
-                                // Normalize channel values to [-1.0, 1.0]. This requirement depends
-                                // on the model. For example, some models might require values to be
-                                // normalized to the range [0.0, 1.0] instead.
-                                float rf = (r - 127) / 255.0f;
-                                float gf = (g - 127) / 255.0f;
-                                float bf = (b - 127) / 255.0f;
-
-                                input.putFloat(rf);
-                                input.putFloat(gf);
-                                input.putFloat(bf);
-                            }
-                        }
-
-                        int bufferSize = 4 * Float.SIZE / Byte.SIZE;
-                        ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
-                        interpreter.run(input, modelOutput);
-                        System.out.println(imageFilePath);
-
-                        modelOutput.rewind();
-                        FloatBuffer probabilities = modelOutput.asFloatBuffer();
-                        final float[] dst = new float[probabilities.capacity()];
-                        probabilities.get(dst); // Copy the contents of the FloatBuffer into dst
-                        for (int i = 0; i < dst.length; i++) {
-                            System.out.print(dst[i]);
-                            tv_output.setText(String.valueOf(probabilities));
-                            if (i == dst.length - 1) {
-                                System.out.println();
-                            } else {
-                                System.out.print(", ");
-                            }
-                        }
-
-                        tv_output.setText(String.valueOf(probabilities));
-
-                        try {
-                            System.out.println(modelOutput);
-                            System.out.println(input);
-                            System.out.println("modelOutput");
-                            BufferedReader reader = new BufferedReader(
-                                    new InputStreamReader(getAssets().open("custom_labels.txt")));
-                            for (int i = 0; i < probabilities.capacity(); i++) {
-                                String label = reader.readLine();
-                                float probability = probabilities.get(i);
-                                Log.i("TAG", String.format("%s: %1.4f", label, probability));
-                            }
-                        } catch (IOException e) {
-                            System.out.println("test_98");
-                            // File not found?
-                        }
-
-                    }
-                });
-
-    }*/
 
 }
