@@ -1,5 +1,6 @@
 package com.example.team98;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -26,7 +28,8 @@ public class Homefrag extends Fragment {
     FragmentStateAdapter pagerAdatper;
     CircleIndicator3 mIndicator;
     ViewPager2 viewPager2;
-
+    Button post;
+    String id;
     public Homefrag() {
         // Required empty public constructor
     }
@@ -37,6 +40,10 @@ public class Homefrag extends Fragment {
                              Bundle savedInstanceState) {
 
         View view =  inflater.inflate(R.layout.activity_home, container, false);
+        post = (Button)view.findViewById(R.id.gal);
+
+        Bundle bundle = getArguments();
+
         // Inflate the layout for this fragment
         viewPager2 = (ViewPager2)view.findViewById(R.id.viewPager2); // home 화면에서 사진 view 를 바꾸어주기 위한 viewpager
         pagerAdatper = new VIewpageAdapter(this,3);
@@ -61,6 +68,13 @@ public class Homefrag extends Fragment {
                 mIndicator.animatePageSelected(position % 3);
             }
 
+        });
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),WritePostActivity.class);//fragment 에서 activity 호출
+                startActivity(intent);
+            }
         });
         return view;
     }

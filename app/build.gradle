@@ -4,6 +4,10 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
+    aaptOptions {
+        noCompress "tflite"  // Your model's file extension: "tflite", "lite", etc.
+    }
+
 
     defaultConfig {
         applicationId "com.example.team98"
@@ -13,6 +17,7 @@ android {
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true//
     }
     compileOptions { //Invoke-customs are only supported starting with Android O (--min-api 26
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -43,6 +48,16 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.4.0' //real-time database
     implementation 'com.google.firebase:firebase-storage:19.2.0' //cloud storage
     implementation 'com.google.firebase:firebase-firestore:21.2.1' //cloud firestore
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.firebase:firebase-ml-model-interpreter:22.0.2' //ML Kit Android 라이브러리의 종속 항목을 추가
+    implementation 'org.tensorflow:tensorflow-lite:2.0.0'
+    implementation 'com.google.mlkit:image-labeling-automl:16.0.0' // Image labeling feature with bundled automl model
+    implementation 'com.google.mlkit:linkfirebase:16.0.0' //모델 동적으로 다운로드
+    implementation 'com.google.android.gms:play-services-basement:17.4.0'
+    implementation 'com.google.firebase:firebase-ml-common:22.1.2'
+    implementation 'com.google.mlkit:image-labeling-automl:16.0.0'
+
+
 
 
     testImplementation 'junit:junit:4.12'

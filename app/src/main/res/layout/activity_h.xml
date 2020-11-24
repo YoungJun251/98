@@ -15,10 +15,12 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
-        android:background="@color/coral"
-        app:menu="@menu/menu">
+        android:background="#2196f3"
+        app:menu="@menu/menu"
+        app:itemIconTint="@drawable/navigation_col"
+        app:itemTextColor="@drawable/navigation_col">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

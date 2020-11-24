@@ -29,6 +29,8 @@
             android:screenOrientation="portrait"></activity>
         <activity android:name=".LoginResult" />
         <activity android:name=".PopupActivity" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name=".WritePostActivity"></activity>
+        <activity android:name=".postactivity"></activity>
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -7,6 +7,8 @@ package com.example.team98;
 
         import androidx.annotation.NonNull;
         import androidx.fragment.app.Fragment;
+
+        import android.os.Handler;
         import android.view.Menu;
         import android.view.MenuItem;
         import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -19,19 +21,23 @@ public class HomeActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     Menu menu;
 
-
-
     Fragment fragment1,fragment2,fragment3;
+    Handler mHandler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_h);
 
 
-
         fragment1 = new list_frag();
         fragment2 = new Homefrag();
         fragment3 = new gps1();
+        Intent intent = getIntent();
+        Bundle bundle = new Bundle();
+        String id =  intent.getExtras().getString("id");
+
+        bundle.putString("id",id);
+        fragment2.setArguments(bundle);
         bottomNavigationView = findViewById(R.id.navigation);
         menu = bottomNavigationView.getMenu();
         bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());
@@ -54,6 +60,13 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this,Catlistactivity.class);
                     startActivity(intent);
 
+                    mHandler.postDelayed(new Runnable()  {
+                        public void run() {
+                            bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());
+                            bottomNavigationView.setSelectedItemId(R.id.home);
+                            // 시간 지난 후 실행할 코딩
+                        }
+                    }, 500); // 0.5초후
 
                     break;
 
@@ -86,7 +99,18 @@ public class HomeActivity extends AppCompatActivity {
                     intent = new Intent(HomeActivity.this,CameraActivity.class);
                     startActivity(intent);
 
+
+                    mHandler.postDelayed(new Runnable()  {
+                        public void run() {
+                            bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());
+                            bottomNavigationView.setSelectedItemId(R.id.home);
+                            // 시간 지난 후 실행할 코딩
+                        }
+                    }, 500); // 0.5초후
+
+
                     break;
+
                 case R.id.gps:
                     menuItem.setIcon(R.drawable.ic_place_24px);    // 선택한 이미지 변경
                     menu.findItem(R.id.list).setIcon(R.drawable.ic_list_24px);

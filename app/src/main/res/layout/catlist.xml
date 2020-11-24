@@ -4,13 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5DC">
+    android:background="@drawable/h_gradiednt">
 
     <TextView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:background="@color/colorWhite"
         android:gravity="center"
         android:text="List"
         android:textColor="#03A9F4"
@@ -23,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

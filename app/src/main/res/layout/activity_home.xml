@@ -1,21 +1,27 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/h_gradiednt">
+
+
+<FrameLayout
     android:id="@+id/mframe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="@color/colorWhite"
             android:gravity="center"
             android:text="HOME"
             android:textColor="#03A9F4"
@@ -26,8 +32,7 @@
         <FrameLayout
             android:id="@+id/frameLayout3"
             android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="45dp"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -36,7 +41,6 @@
                 android:id="@+id/viewPager2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#F0ECDD"
                 android:orientation="horizontal" />
 
             <me.relex.circleindicator.CircleIndicator3
@@ -44,13 +48,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="180dp"
                 app:ci_drawable="@drawable/black_radius" />
+
         </FrameLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:padding="20dp">
+            <Button
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_notify"
+                android:text="NOTIFY"
+                android:textColor="@color/colorWhite"
+                android:textSize = "20dp"
+                android:textStyle="bold"
+                android:gravity="top|center"
+
+                />
+            <Button
+                android:id="@+id/gal"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_weight="1"
+                android:background="@drawable/ic_dashing_tag"
+                android:text="NEWS"
+                android:textColor="@color/colorWhite"
+                android:textSize = "20dp"
+                android:textStyle="bold"
+                android:gravity="top|center"
+                android:layout_marginLeft="10dp">
+
+            </Button>
+        </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/colorWhite"
+            android:drawableRight="@drawable/ic_register"
+            android:text="권한을 확인하세요 \n 등급에 따라 권한 획득 가능"
+            android:textStyle="italic"
+            android:layout_marginBottom="60dp" > // bottom navigation view 와 겹치지 않게
+
+        </Button>
 
 
+    </LinearLayout>
+    </FrameLayout>
 
-</FrameLayout>
+</ScrollView>

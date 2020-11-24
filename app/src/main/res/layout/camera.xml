@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" 
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".MainActivity">
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_width="350dp"
+        android:layout_height="550dp">
 
         <ImageView
             android:id="@+id/iv_result"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </ImageView>
-
+            android:layout_width="350dp"
+            android:layout_height="550dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:scaleType="fitXY"></ImageView>
 
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="337dp"
+        android:layout_height="100dp"
+        android:gravity="center"
+        android:text="누굴까요?"
+        android:textStyle="bold" />
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -29,21 +40,29 @@
 
         <Button
             android:id="@+id/btn_capture"
-            android:layout_width="wrap_content"
+            android:layout_width="206dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="촬영">
 
         </Button>
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/find_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="select image"
+            tools:ignore="OnClick" />
+
+        <Button
+            android:id="@+id/clickUpload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="upload"
-            android:onClick="clickUpload"/>
+            android:onClick="clickUpload"
+            tools:ignore="OnClick" />
 
     </LinearLayout>
-    
+
 </LinearLayout>
