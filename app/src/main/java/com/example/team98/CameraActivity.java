@@ -56,7 +56,9 @@ import org.tensorflow.lite.Interpreter;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -72,6 +74,7 @@ public class CameraActivity extends AppCompatActivity {
     private static final int REQUEST_FILE = 10;
     private static final int PERMISSION_FILE = 20;
     private static final int REQUEST_IMAGE_CAPTURE = 672;
+    private static final int PERMISSION_CAMERA = 40;
     public static Uri photoUri;
     public static Uri uri;
     public String imageFilePath;
@@ -85,6 +88,7 @@ public class CameraActivity extends AppCompatActivity {
     public ImageView imageView, img_show, img_org;
     public Button correct, incorrect;
     public Dialog img_dialog;
+    public static BufferedReader reader_info = null;
 
     FirebaseCustomRemoteModel remoteModel =
             new FirebaseCustomRemoteModel.Builder("good_model").build(); // 객체 생성
@@ -128,9 +132,7 @@ public class CameraActivity extends AppCompatActivity {
                 if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_FILE);
                 } else {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                    intent.setType("image/*");
-                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_FILE);
+                    findGallery();
 
                 }
             }
@@ -140,24 +142,37 @@ public class CameraActivity extends AppCompatActivity {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //카메라 띄우기
-                if(intent.resolveActivity(getPackageManager()) != null) {
-                    File photoFile = null;
-                    try{
-                        photoFile = createImageFile();
-                    }catch(IOException e) {
-
-                    }
-                    if(photoFile != null) {
-                        photoUri = FileProvider.getUriForFile(getApplicationContext(),getPackageName(),photoFile);
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); //외부로 카메라 띄움
-                        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); // 다음 intent 로 화면 변환이 일어났다가  돌아올때 다음 엑티비티로부터 값을 가지고 온다.
-                    }
+                if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA);
+                } else {
+                    goToCamera();
                 }
             }
         });
-
     }
+
+    private void findGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_FILE);
+    }
+    private void goToCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //카메라 띄우기
+        if(intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try{
+                photoFile = createImageFile();
+            }catch(IOException e) {
+
+            }
+            if(photoFile != null) {
+                photoUri = FileProvider.getUriForFile(getApplicationContext(),getPackageName(),photoFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); //외부로 카메라 띄움
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); // 다음 intent 로 화면 변환이 일어났다가  돌아올때 다음 엑티비티로부터 값을 가지고 온다.
+            }
+        }
+    }
+
 
 
     @Override
@@ -287,6 +302,7 @@ public class CameraActivity extends AppCompatActivity {
         float temp = 0;
         String label_temp = null;
         Drawable drawable = null;
+        cat_inf = findViewById(R.id.cat_inf);
 
         interpreter.run(input, modelOutput);
         modelOutput.rewind();
@@ -306,20 +322,23 @@ public class CameraActivity extends AppCompatActivity {
                     label_temp = label;
                 }
             }
-            switch (label_temp){
 
+            switch (label_temp){
                 case "카라멜":
                     drawable = getResources().getDrawable(R.drawable.caramel_show);
-
+                    reader_info = new BufferedReader(new InputStreamReader(getAssets().open("caramel_info.txt")));
                     break;
                 case "카레":
                     drawable = getResources().getDrawable(R.drawable.carre_show);
+                    reader_info = new BufferedReader(new InputStreamReader(getAssets().open("carre_info.txt")));
                     break;
                 case "막내":
                     drawable = getResources().getDrawable(R.drawable.makkne_show);
+                    reader_info = new BufferedReader(new InputStreamReader(getAssets().open("makkne_info.txt")));
                     break;
                 case "얼룩이":
                     drawable = getResources().getDrawable(R.drawable.ulluk_show);
+                    reader_info = new BufferedReader(new InputStreamReader(getAssets().open("ulluk_info.txt")));
                     break;
             }
             ShowImageDialog(label_temp, uri, drawable, x);
@@ -329,6 +348,22 @@ public class CameraActivity extends AppCompatActivity {
             // File not found?
         }
         dialog.cancel();
+    }
+
+    private String ReadTextFile(BufferedReader reader) {
+        StringBuffer strBuffer = new StringBuffer();
+        try{
+            String line="";
+            while((line=reader.readLine())!=null){
+                strBuffer.append(line+"\n");
+            }
+
+            reader.close();
+        }catch (IOException e){
+            e.printStackTrace();
+            return "";
+        }
+        return strBuffer.toString();
     }
 
     private void ShowImageDialog(String label_temp, Uri uri_1, Drawable drawable, int x) {
@@ -354,6 +389,8 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 img_dialog.dismiss();
+                String read = ReadTextFile(reader_info);
+                cat_inf.setText(read);
             }
         });
 
@@ -361,40 +398,12 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(x == 1){
-                    find_img.setOnClickListener(new View.OnClickListener() { //갤러리 찾기
-                        @Override
-                        public void onClick(View v) {
-                            if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_FILE);
-                            } else {
-                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                                intent.setType("image/*");
-                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_FILE);
-
-                            }
-                        }
-                    });
+                    findGallery();
+                    img_dialog.dismiss();
                 }
                 if(x == 2){
-                    camera.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //카메라 띄우기
-                            if(intent.resolveActivity(getPackageManager()) != null) {
-                                File photoFile = null;
-                                try{
-                                    photoFile = createImageFile();
-                                }catch(IOException e) {
-
-                                }
-                                if(photoFile != null) {
-                                    photoUri = FileProvider.getUriForFile(getApplicationContext(),getPackageName(),photoFile);
-                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); //외부로 카메라 띄움
-                                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); // 다음 intent 로 화면 변환이 일어났다가  돌아올때 다음 엑티비티로부터 값을 가지고 온다.
-                                }
-                            }
-                        }
-                    });
+                    goToCamera();
+                    img_dialog.dismiss();
                 }
 
             }
