@@ -39,8 +39,7 @@
                         android:id="@+id/login_ID"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:hint="@string/prompt_email"
-                        android:textColor="@color/zircon"></EditText>
+                        android:hint="@string/prompt_email"></EditText>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
