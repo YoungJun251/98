@@ -1,6 +1,8 @@
 package com.example.team98;
 
 import android.Manifest;
+import android.app.ActionBar;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,9 +18,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,9 +80,11 @@ public class CameraActivity extends AppCompatActivity {
     public String imageFilestate;
     private Interpreter interpreter;
     private View v;
-    public TextView textView;
-    public Button find_img;
-    public ImageView imageView;
+    public TextView textView, text1, cat_inf;
+    public Button find_img, camera;
+    public ImageView imageView, img_show, img_org;
+    public Button correct, incorrect;
+    public Dialog img_dialog;
 
     FirebaseCustomRemoteModel remoteModel =
             new FirebaseCustomRemoteModel.Builder("good_model").build(); // 객체 생성
@@ -91,6 +100,7 @@ public class CameraActivity extends AppCompatActivity {
         mStorageRef = FirebaseStorage.getInstance().getReference();
         textView = findViewById(R.id.textView);
         find_img = findViewById(R.id.find_img);
+        camera = findViewById(R.id.btn_capture);
         imageView = findViewById(R.id.iv_result);
 
         FirebaseModelManager.getInstance().download(remoteModel, conditions)
@@ -121,26 +131,24 @@ public class CameraActivity extends AppCompatActivity {
                     Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                     intent.setType("image/*");
                     startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_FILE);
+
                 }
             }
         });
 
         //btn 클릭시 action
-        findViewById(R.id.btn_capture).setOnClickListener(new View.OnClickListener() {
+        camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //카메라 띄우기
-                if(intent.resolveActivity(getPackageManager()) != null)
-                {
+                if(intent.resolveActivity(getPackageManager()) != null) {
                     File photoFile = null;
                     try{
                         photoFile = createImageFile();
-                    }catch(IOException e)
-                    {
+                    }catch(IOException e) {
 
                     }
-                    if(photoFile != null)
-                    {
+                    if(photoFile != null) {
                         photoUri = FileProvider.getUriForFile(getApplicationContext(),getPackageName(),photoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); //외부로 카메라 띄움
                         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); // 다음 intent 로 화면 변환이 일어났다가  돌아올때 다음 엑티비티로부터 값을 가지고 온다.
@@ -152,6 +160,7 @@ public class CameraActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -159,7 +168,8 @@ public class CameraActivity extends AppCompatActivity {
             switch (requestCode){
                 case REQUEST_FILE: //find_img
                     uri = data.getData();
-                    setLabelerFromLocalModel(uri);
+                    setLabelerFromLocalModel(uri, 1);
+
                     textView.setText("");
                     imageView.setImageURI(uri);
                     break;
@@ -189,7 +199,7 @@ public class CameraActivity extends AppCompatActivity {
 
                     ((ImageView) findViewById(R.id.iv_result)).setImageBitmap(rotate(bitmap, exifDegree));
 
-                    setLabelerFromLocalModel(uri);
+                    setLabelerFromLocalModel(uri, 2);
                     textView.setText("");
                     imageView.setImageURI(uri);
                     break;
@@ -214,7 +224,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    private void setLabelerFromLocalModel(Uri photoUri) {
+    private void setLabelerFromLocalModel(Uri uri, int x) {
         showProgressDialog();
         FirebaseModelManager.getInstance().getLatestModelFile(remoteModel)
                 .addOnCompleteListener(new OnCompleteListener<File>() { //TensorFlow Lite Interpreter 과정
@@ -227,9 +237,9 @@ public class CameraActivity extends AppCompatActivity {
                             BitmapFactory.Options options = new BitmapFactory.Options();    //이미지 비트맵으로 변환 과정
                             options.inSampleSize = 4;
                             try {
-                                Bitmap bm = MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri);
+                                Bitmap bm = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                                 Bitmap bitmap = Bitmap.createScaledBitmap(bm, 224, 224, true);
-                                int inBufferSize = 1 * 224*3*224* java.lang.Float.SIZE / java.lang.Byte.SIZE;
+                                int inBufferSize = 1 * 224 * 3 * 224 * java.lang.Float.SIZE / java.lang.Byte.SIZE;
                                 ByteBuffer input = ByteBuffer.allocateDirect(inBufferSize).order(ByteOrder.nativeOrder());
                                 for (int y = 0; y < 224; y++) {
                                     for (int x = 0; x < 224; x++) {
@@ -254,7 +264,7 @@ public class CameraActivity extends AppCompatActivity {
 
                                 int bufferSize = 4 * java.lang.Float.SIZE / java.lang.Byte.SIZE;
                                 ByteBuffer modelOutput = ByteBuffer.allocateDirect(bufferSize).order(ByteOrder.nativeOrder());
-                                modelRun(modelOutput, input);
+                                modelRun(modelOutput, input, x, uri);
 
                                 System.out.println("2");
                             } catch (IOException e) {
@@ -274,7 +284,11 @@ public class CameraActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void modelRun(ByteBuffer modelOutput, ByteBuffer input){
+    private void modelRun(ByteBuffer modelOutput, ByteBuffer input, int x, Uri uri){
+        float temp = 0;
+        String label_temp = null;
+        Drawable drawable = null;
+
         interpreter.run(input, modelOutput);
         modelOutput.rewind();
         FloatBuffer probabilities = modelOutput.asFloatBuffer();
@@ -288,7 +302,28 @@ public class CameraActivity extends AppCompatActivity {
                 float probability = probabilities.get(i);
                 Log.i("TAG", String.format("%s: %1.4f", label, probability));
                 textView.append(label + " : " + ("" + probability * 100).subSequence(0, 4) + "%" + "\n");
+                if(temp < probability){
+                    temp = probability;
+                    label_temp = label;
+                }
             }
+            switch (label_temp){
+
+                case "카라멜":
+                    drawable = getResources().getDrawable(R.drawable.caramel_show);
+
+                    break;
+                case "카레":
+                    drawable = getResources().getDrawable(R.drawable.carre_show);
+                    break;
+                case "막내":
+                    drawable = getResources().getDrawable(R.drawable.makkne_show);
+                    break;
+                case "얼룩이":
+                    drawable = getResources().getDrawable(R.drawable.ulluk_show);
+                    break;
+            }
+            ShowImageDialog(label_temp, uri, drawable, x);
 
         } catch (IOException e) {
             System.out.println("test_98");
@@ -297,6 +332,79 @@ public class CameraActivity extends AppCompatActivity {
         dialog.cancel();
     }
 
+    private void ShowImageDialog(String label_temp, Uri uri_1, Drawable drawable, int x) {
+
+        img_dialog = new Dialog(CameraActivity.this);
+        img_dialog.setContentView(R.layout.image_popup);
+        img_dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        Window window = img_dialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        window.getAttributes().windowAnimations = R.style.DialogAnimation;
+
+        text1 = img_dialog.findViewById(R.id.text1);
+        correct = img_dialog.findViewById(R.id.correct_img);
+        incorrect = img_dialog.findViewById(R.id.incorrect_img);
+        img_show = img_dialog.findViewById(R.id.img_show);
+        img_org = img_dialog.findViewById(R.id.img_org);
+
+        text1.setText(label_temp); //팝업시 제목 추가
+        img_show.setImageURI(uri_1);
+        img_org.setImageDrawable(drawable);
+
+        correct.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                img_dialog.dismiss();
+            }
+        });
+
+        incorrect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(x == 1){
+                    find_img.setOnClickListener(new View.OnClickListener() { //갤러리 찾기
+                        @Override
+                        public void onClick(View v) {
+                            if (ContextCompat.checkSelfPermission(CameraActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                ActivityCompat.requestPermissions(CameraActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_FILE);
+                            } else {
+                                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                                intent.setType("image/*");
+                                startActivityForResult(Intent.createChooser(intent, "Select Picture"), REQUEST_FILE);
+
+                            }
+                        }
+                    });
+                }
+                if(x == 2){
+                    camera.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); //카메라 띄우기
+                            if(intent.resolveActivity(getPackageManager()) != null) {
+                                File photoFile = null;
+                                try{
+                                    photoFile = createImageFile();
+                                }catch(IOException e) {
+
+                                }
+                                if(photoFile != null) {
+                                    photoUri = FileProvider.getUriForFile(getApplicationContext(),getPackageName(),photoFile);
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); //외부로 카메라 띄움
+                                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); // 다음 intent 로 화면 변환이 일어났다가  돌아올때 다음 엑티비티로부터 값을 가지고 온다.
+                                }
+                            }
+                        }
+                    });
+                }
+
+            }
+        });
+
+        img_dialog.setCancelable(true);
+        window.setLayout(ActionBar.LayoutParams.WRAP_CONTENT,ActionBar.LayoutParams.WRAP_CONTENT);
+        img_dialog.show();
+    }
 
 
     private int exifOrientationToDegress(int exifOrientation)   //이미지 회전 부분(가로로 찍거나 세로로 찍어도 회전변환해줌)

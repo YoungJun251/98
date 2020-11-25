@@ -6,52 +6,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/h_gradiednt">
 
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center"
+        android:text="IMAGE"
+        android:textColor="#03A9F4"
+        android:textSize="24sp"
+        android:layout_marginTop="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayout3"
+        tools:layout_editor_absoluteX="411dp" />
+
+    <ImageView
+        android:id="@+id/iv_result"
         android:layout_width="350dp"
-        android:layout_height="550dp">
-
-        <ImageView
-            android:id="@+id/iv_result"
-            android:layout_width="350dp"
-            android:layout_height="550dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:scaleType="fitXY"></ImageView>
-
-
-    </LinearLayout>
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edge"
+        android:scaleType="fitXY"></ImageView>
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:text="INFORMATION"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20dp"></TextView>
+    <ListView
+        android:id="@+id/cat_inf"
+        android:layout_width="350dp"
+        android:layout_height="150dp"
+        android:layout_marginBottom="10dp"
+        android:text="_____________"
+        android:gravity="center_horizontal"
+        android:textSize="10dp"
+        android:textStyle="bold"></ListView>
+    <TextView
+        android:layout_width="350dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:text="ACCURACY"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20dp"></TextView>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="337dp"
         android:layout_height="100dp"
-        android:gravity="center"
-        android:text="누굴까요?"
+        android:gravity="center_horizontal"
+        android:text="__________________"
         android:textStyle="bold" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:gravity="center"
+        android:layout_marginBottom="30dp"
         >
 
         <Button
             android:id="@+id/btn_capture"
-            android:layout_width="206dp"
-            android:layout_height="wrap_content"
-            android:text="촬영">
+            android:layout_width="192dp"
+            android:layout_height="65dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/coral_color"
+            android:text="CAMERA"
+            android:textSize="15dp"
+            android:textAllCaps="false"
+            >
 
         </Button>
 
         <Button
             android:id="@+id/find_img"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="65dp"
             android:layout_weight="1"
-            android:text="select image"
+            android:text="GALLERY"
+            android:background="@drawable/coral_color"
+            android:layout_marginRight="10dp"
+            android:textSize="15dp"
+            android:textAllCaps="false"
             tools:ignore="OnClick" />
 
     </LinearLayout>
