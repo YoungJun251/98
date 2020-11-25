@@ -11,6 +11,9 @@ package com.example.team98;
         import android.os.Handler;
         import android.view.Menu;
         import android.view.MenuItem;
+
+        import com.google.android.gms.maps.OnMapReadyCallback;
+        import com.google.android.gms.maps.SupportMapFragment;
         import com.google.android.material.bottomnavigation.BottomNavigationView;
         import androidx.viewpager2.adapter.FragmentStateAdapter;
         import androidx.viewpager2.widget.ViewPager2;
@@ -120,7 +123,6 @@ public class HomeActivity extends AppCompatActivity {
                     //intent = new Intent(HomeActivity.this,gps.class);
                     //startActivity(intent);
                     getSupportFragmentManager().beginTransaction().replace(R.id.m2frame,fragment3).commitAllowingStateLoss();
-
                     break;
 
             }// switch()..

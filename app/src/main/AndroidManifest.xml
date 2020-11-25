@@ -19,10 +19,9 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBMJpmRBhIhIVY8RPVoXXTeOu-l_Xjkv_g" />
+            android:value="AIzaSyBMJpmRBhIhIVY8RPVoXXTeOu-l_Xjkv_g"/>
         <activity android:name=".HomeActivity"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".gps"></activity>
         <activity android:name=".Catlistactivity"
             android:screenOrientation="portrait"></activity>
         <activity android:name=".CameraActivity"
