@@ -144,7 +144,6 @@ public class CameraActivity extends AppCompatActivity {
                         photoUri = FileProvider.getUriForFile(getApplicationContext(),getPackageName(),photoFile);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri); //외부로 카메라 띄움
                         startActivityForResult(intent, REQUEST_IMAGE_CAPTURE); // 다음 intent 로 화면 변환이 일어났다가  돌아올때 다음 엑티비티로부터 값을 가지고 온다.
-
                     }
                 }
             }
@@ -298,7 +297,6 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-
     private int exifOrientationToDegress(int exifOrientation)   //이미지 회전 부분(가로로 찍거나 세로로 찍어도 회전변환해줌)
     {
         if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
@@ -319,7 +317,6 @@ public class CameraActivity extends AppCompatActivity {
         return Bitmap.createBitmap(bitmap,0 ,0,bitmap.getWidth(), bitmap.getHeight(), matrix,true);
 
     }
-
 
 
     PermissionListener permissionListener = new PermissionListener() {
