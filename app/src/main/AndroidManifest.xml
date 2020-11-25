@@ -30,8 +30,8 @@
         <activity android:name=".PopupActivity" android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name=".WritePostActivity"></activity>
         <activity android:name=".postactivity"></activity>
+        <activity android:name=".Notifyactivity" android:theme="@android:style/Theme.Dialog"></activity>
         <activity android:name=".GalleryActivity"></activity>
-
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>

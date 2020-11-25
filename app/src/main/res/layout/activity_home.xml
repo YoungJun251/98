@@ -59,18 +59,19 @@
             android:orientation="horizontal"
             android:layout_marginTop="20dp"
             android:padding="20dp">
+
             <Button
+                android:id="@+id/btn_notify"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_weight="1"
                 android:background="@drawable/ic_notify"
+                android:gravity="top|center"
                 android:text="NOTIFY"
                 android:textColor="@color/colorWhite"
-                android:textSize = "20dp"
-                android:textStyle="bold"
-                android:gravity="top|center"
+                android:textSize="20dp"
 
-                />
+                android:textStyle="bold" />
             <Button
                 android:id="@+id/gal"
                 android:layout_width="200dp"

@@ -29,7 +29,7 @@ public class Homefrag extends Fragment {
     FragmentStateAdapter pagerAdatper;
     CircleIndicator3 mIndicator;
     ViewPager2 viewPager2;
-    Button post;
+    Button post,notify;
     String id;
     public Homefrag() {
         // Required empty public constructor
@@ -42,6 +42,8 @@ public class Homefrag extends Fragment {
 
         View view =  inflater.inflate(R.layout.activity_home, container, false);
         post = (Button)view.findViewById(R.id.gal);
+        notify= (Button)view.findViewById(R.id.btn_notify);
+
         Bundle bundle = getArguments();
         id = bundle.getString("id");
         Log.v("2", id);
@@ -75,6 +77,17 @@ public class Homefrag extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),WritePostActivity.class);//fragment 에서 activity 호출
                 intent.putExtra("id",id);
+                startActivity(intent);
+            }
+        });
+        notify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), Notifyactivity.class);//fragment 에서 activity 호출
+                //텍스트 전달
+                intent.putExtra("data","- 2019년 7월 6일 막내를 구조하여 병원에서 진단 결과 골반뼈가 살짝 부러져있었음 자연 방사하기 전  임시보호함\\n\n" +
+                        "- 19년 7월 18일 다시 병원을 방문하여 상태 확인 후 호전되기까지 임시보호함\\n\n" +
+                        "- 19년 8월 4일에 자연방사\n ");
                 startActivity(intent);
             }
         });
