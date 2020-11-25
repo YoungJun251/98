@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -41,9 +42,9 @@ public class Homefrag extends Fragment {
 
         View view =  inflater.inflate(R.layout.activity_home, container, false);
         post = (Button)view.findViewById(R.id.gal);
-
         Bundle bundle = getArguments();
-
+        id = bundle.getString("id");
+        Log.v("2", id);
         // Inflate the layout for this fragment
         viewPager2 = (ViewPager2)view.findViewById(R.id.viewPager2); // home 화면에서 사진 view 를 바꾸어주기 위한 viewpager
         pagerAdatper = new VIewpageAdapter(this,3);
@@ -73,6 +74,7 @@ public class Homefrag extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),WritePostActivity.class);//fragment 에서 activity 호출
+                intent.putExtra("id",id);
                 startActivity(intent);
             }
         });

@@ -23,6 +23,7 @@ public class HomeActivity extends AppCompatActivity {
 
     Fragment fragment1,fragment2,fragment3;
     Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
