@@ -31,6 +31,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class comment_post extends AppCompatActivity {
@@ -84,7 +85,9 @@ public class comment_post extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "comment를 작성해주세여", Toast.LENGTH_SHORT).show();
             }
             else{
-            ChatData chatData = new ChatData(id,t.getText().toString());  // 유저 이름과 메세지로 chatData 만들기
+                Log.e("afd",new Date(System.currentTimeMillis()).toString());
+
+            ChatData chatData = new ChatData(id,t.getText().toString(),new Date(System.currentTimeMillis()));  // 유저 이름과 메세지로 chatData 만들기
             databaseReference.child("message").child(docu).push().setValue(chatData);  // 기본 database 하위 message라는 child에 chatData를 list로 만들기
             t.setText("");
             }
@@ -98,7 +101,7 @@ public class comment_post extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 ChatData chatData = dataSnapshot.getValue(ChatData.class);  // chatData를 가져오고
-                adapter.add("[" + chatData.getUserName() + "] : " + chatData.getMessage());  // adapter에 추가합니다.
+                adapter.add("[" + chatData.getUserName() + "] : " + chatData.getMessage()+ " ("+ new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(chatData.getD())+")");  // adapter에 추가합니다.
             }
 
             @Override
