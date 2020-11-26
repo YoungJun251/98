@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,9 +79,15 @@ public class comment_post extends AppCompatActivity {
 
 
         input.setOnClickListener((view) -> {
+            if(t.getText().toString().equals(""))
+            {
+                Toast.makeText(getApplicationContext(), "comment를 작성해주세여", Toast.LENGTH_SHORT).show();
+            }
+            else{
             ChatData chatData = new ChatData(id,t.getText().toString());  // 유저 이름과 메세지로 chatData 만들기
             databaseReference.child("message").child(docu).push().setValue(chatData);  // 기본 database 하위 message라는 child에 chatData를 list로 만들기
             t.setText("");
+            }
         });
 
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
