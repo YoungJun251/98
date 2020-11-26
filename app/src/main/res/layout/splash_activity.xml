@@ -24,14 +24,21 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="160dp"
             app:srcCompat="@drawable/dan_cat"/>
-        <ImageView
+
+        <TextView
             android:id="@+id/dan_name"
-            android:layout_width="120dp"
-            android:layout_height="40dp"
+            android:layout_width="170dp"
+            android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="150dp"
-            android:layout_marginLeft="5dp"
-            app:srcCompat="@drawable/dan_name"/>
+            android:layout_marginTop="140dp"
+            android:fontFamily="@font/bm_1"
+            android:gravity="center"
+            android:text="단 냥 이"
+            android:textColor="@color/pink"
+            android:textSize="50dp"
+            android:textStyle="bold"
+            />
+
         <ImageView
             android:layout_width="200dp"
             android:layout_height="40dp"

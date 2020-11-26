@@ -7,12 +7,14 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SplashActivity extends AppCompatActivity {
-    ImageView dan_cat, dan_name;
+    ImageView dan_cat;
+    TextView dan_name;
     private Thread splayshTread;
 
     @Override
