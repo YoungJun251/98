@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -41,13 +42,19 @@ import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 public class postadapter extends RecyclerView.Adapter<postadapter.GalleryViewHolder> {
     private ArrayList<postinfo> mDataset;
     private Activity activity;
-    static class GalleryViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
-        GalleryViewHolder(CardView v) {
-            super(v);
-            cardView = v;
-        }
+    private Adapter.OnItemClickListener mListener = null;
+
+    public interface OnItemClickListener{
+        void onItemClick(View v, int position);
     }
+
+    // OnItemClickListener 리스너 객체 참조를 어댑터에 전달하는 메서드
+    public void setOnItemClickListener(Adapter.OnItemClickListener listener) {
+        this.mListener = listener ;
+    }
+
+
+
 
     public postadapter(ArrayList<postinfo> postinfo) {
         this.mDataset = postinfo;
@@ -59,9 +66,6 @@ public class postadapter extends RecyclerView.Adapter<postadapter.GalleryViewHol
     public postadapter.GalleryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_post, parent, false);
         final GalleryViewHolder galleryViewHolder = new GalleryViewHolder(cardView);
-
-
-
         return galleryViewHolder;
     }
 
@@ -106,6 +110,26 @@ public class postadapter extends RecyclerView.Adapter<postadapter.GalleryViewHol
         Bitmap bitmap = BitmapFactory.decodeStream(input);
         input.close();
         return bitmap;
+    }
+
+    public class GalleryViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
+        GalleryViewHolder(CardView v) {
+            super(v);
+            cardView = v;
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        // 리스너 객체의 메서드 호출.
+                        if (mListener != null) {
+                            mListener.onItemClick(v, pos) ;
+                        }
+                    }
+                }
+            });
+        }
     }
 
 }

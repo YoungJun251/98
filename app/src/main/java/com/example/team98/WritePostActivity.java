@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -40,7 +41,10 @@ public class  WritePostActivity extends AppCompatActivity {
     private static final String TAG = "WritePostActivity";
     FloatingActionButton b ;
     String id;
-    private SwipeRefreshLayout swipelayout;
+    RecyclerView recyclerView;
+    postadapter mAdapter;
+    ArrayList<postinfo> postList;
+
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment1);
@@ -49,11 +53,13 @@ public class  WritePostActivity extends AppCompatActivity {
         id = intent.getExtras().getString("id");
         b = findViewById(R.id.floatingActionButton);
         b.setOnClickListener(onClickListener);
-        swipelayout = findViewById(R.id.refresh_layout);
+        SwipeRefreshLayout swipelayout = findViewById(R.id.refresh_layout);
 
 
-        start();
-        swipelayout.setOnRefreshListener(
+        //start();
+        ArrayList<postinfo> postList = new ArrayList<>();
+         start();
+         swipelayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -64,6 +70,9 @@ public class  WritePostActivity extends AppCompatActivity {
                         }
                     }
             );
+
+
+
 
         }
     private void myStartActivity(Class c, int media, int requestCode) {
@@ -77,15 +86,14 @@ public class  WritePostActivity extends AppCompatActivity {
             case R.id.floatingActionButton:
                 Intent intent = new Intent(WritePostActivity.this,postactivity.class);
                 intent.putExtra("id",id);
-                Log.v("3", id);
                 startActivity(intent);
                 break;
         }
     };
     private void start()
     {
-        ArrayList<postinfo> postList = new ArrayList<>();
-
+        postList = new ArrayList<>();
+        ArrayList<String> s = new ArrayList<String>();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("posts")
                  .orderBy("createdate", Query.Direction.DESCENDING)
@@ -95,7 +103,8 @@ public class  WritePostActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                s.add(document.getId());
+                                Log.e(TAG,  " => " + document.getId());
                                 postList.add(new postinfo(
                                         document.getData().get("title").toString(),
                                         document.getData().get("contents").toString(),
@@ -104,12 +113,27 @@ public class  WritePostActivity extends AppCompatActivity {
                                         new Date(document.getDate("createdate").getTime())));
                                 Log.e("로그","데이터" + document.getDate("createdate").getTime());
                             }
-                            RecyclerView recyclerView = findViewById(R.id.recycler);
+                            recyclerView = findViewById(R.id.recycler);
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setLayoutManager(new LinearLayoutManager(WritePostActivity.this));
 
-                            RecyclerView.Adapter mAdapter = new postadapter(postList);
+                            mAdapter = new postadapter(postList);
                             recyclerView.setAdapter(mAdapter);
+                            mAdapter.setOnItemClickListener(new Adapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(View v, int position) {
+                                    // 클릭했을때 원하는데로 처리해주는 부분
+
+                                    Intent intent = new Intent(WritePostActivity.this,comment_post.class);
+                                    intent.putExtra("Object",postList.get(position));
+                                    intent.putExtra("id",id);
+                                    intent.putExtra("docu",s.get(position));
+                                    Log.v(TAG,postList.get(position).getTitle());
+                                    startActivity(intent);
+
+                                }
+                            });
+
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }

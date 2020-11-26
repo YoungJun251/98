@@ -42,6 +42,7 @@
         </activity>
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".Notifyactivity" android:theme="@android:style/Theme.Dialog"></activity>
+        <activity android:name=".comment_post"></activity>
 
         <provider
             android:authorities="com.example.team98"

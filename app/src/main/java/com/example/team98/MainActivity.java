@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
         TextInput_ID = findViewById(R.id.login_ID);
         TextInput_PW = findViewById(R.id.login_PW);
+        TextInput_ID.setPrivateImeOptions("defaultInputmode=english; ");// 키보드 영문 키보드 부터 나오도록 지정
+        출처: https://gap85.tistory.com/entry/EditText-키보드-언어-셋팅 [Joo studio]
         m1 = findViewById(R.id.emailError);
         m2 = findViewById(R.id.passError);
 

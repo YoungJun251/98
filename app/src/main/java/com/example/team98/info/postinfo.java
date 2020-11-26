@@ -1,8 +1,9 @@
 package com.example.team98.info;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class postinfo {
+public class postinfo implements Serializable {
     private String title;
     private String contents;
     private String publisher;
