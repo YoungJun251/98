@@ -67,8 +67,6 @@ public class LoginResult extends AppCompatActivity
                     */
                 }
 
-
-            Log.v("11","제발 되라");
             makeNewId();
 
         }

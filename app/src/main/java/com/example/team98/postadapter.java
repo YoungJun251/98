@@ -78,7 +78,7 @@ public class postadapter extends RecyclerView.Adapter<postadapter.GalleryViewHol
 
 
         titleTextView.setText(mDataset.get(position).getTitle());
-        contentsTextView.setText(mDataset.get(position).getContents());
+        contentsTextView.setText(mDataset.get(position).getContents()+"\n");
         dateTextView.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(mDataset.get(position).getCreatedate()));
         idTextView.setText("작성자 : " +mDataset.get(position).getPublisher());
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);

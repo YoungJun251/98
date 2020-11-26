@@ -27,7 +27,7 @@
                 android:id="@+id/edittitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Title"></EditText>
+                android:hint="Title"></EditText>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,30 +38,36 @@
                     android:id="@+id/post_img"
                     android:layout_width="match_parent"
                     android:layout_height="300dp"
-                    app:srcCompat="@android:mipmap/sym_def_app_icon" />
+                    app:srcCompat="@drawable/logo_transparent" />
 
                 <EditText
                     android:id="@+id/editinfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:gravity="top"
                     android:padding="10dp"
-                    android:text="내용"></EditText>
+                    android:text="내용\n\n"
+                    android:background="@drawable/bg_btn"></EditText>
             </LinearLayout>
 
             <Button
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="이미지" />
+                android:text="이미지"
+                android:background="@drawable/btn_kakao"
+                android:layout_marginBottom="5dp"/>
 
             <Button
                 android:id="@+id/post"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="올리기" />
+                android:text="올리기"
+                android:background="@drawable/btn_kakao"/>
         </LinearLayout>
     </RelativeLayout>
 

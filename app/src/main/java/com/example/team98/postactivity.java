@@ -1,5 +1,6 @@
 package com.example.team98;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class postactivity extends AppCompatActivity {
     StorageReference rootRef;
     UploadTask uploadTask;
     public Uri aUri;
+    private ProgressDialog dialog;
 
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +53,7 @@ public class postactivity extends AppCompatActivity {
         id = intent.getExtras().getString("id");
         firebaseStorage = FirebaseStorage.getInstance();
         rootRef = firebaseStorage.getReference();
-
+        dialog = new ProgressDialog(this);
 
 
     }
@@ -79,6 +81,7 @@ public class postactivity extends AppCompatActivity {
             {
                 case R.id.post:
                     //profileUpdate();
+                    showProgressDialog();
                     storageupload();
                     break;
                 case R.id.image:
@@ -134,8 +137,9 @@ public class postactivity extends AppCompatActivity {
 
     private void profileUpdate()
     {
-        final String title = ((EditText)findViewById(R.id.edittitle)).getText().toString();
-        final String contents = ((EditText)findViewById(R.id.editinfo)).getText().toString();
+        String title = ((EditText)findViewById(R.id.edittitle)).getText().toString();
+        String contents = ((EditText)findViewById(R.id.editinfo)).getText().toString();
+
 
     if(title.length()>0 && contents.length()>0)
     {
@@ -148,7 +152,11 @@ public class postactivity extends AppCompatActivity {
         postinfo postinfo = new postinfo(title,contents,id,aUri.toString(),new Date());
         uploader(postinfo);
     }else {
-        startToast("정보를 입력해주세요");
+        //startToast("정보를 입력해주세요");
+        if(!(title.length()>0)) title = "title";
+        if(!(contents.length()>0)) title = "내용 없음 ";
+        postinfo postinfo = new postinfo(title,contents,id,aUri.toString(),new Date());
+        uploader(postinfo);
         }
     }
 
@@ -160,6 +168,8 @@ public class postactivity extends AppCompatActivity {
                     public void onSuccess(DocumentReference documentReference) {
 
                         Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                        dialog.cancel();
+                        onBackPressed();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -170,6 +180,12 @@ public class postactivity extends AppCompatActivity {
                 });
     }
 
+    private void showProgressDialog(){
+        Log.v(TAG,"dialog");
+        dialog.setMessage("Loading...");
+        dialog.setCancelable(true);
+        dialog.show();
+    }
     private void startToast(String msg){
         Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }

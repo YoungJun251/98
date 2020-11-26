@@ -1,66 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#eeeeee"
     android:orientation="vertical"
-    android:layout_width="300dp"
-    android:layout_height="wrap_content">
+    android:gravity="center">
 
-    <!-- tiltle -->
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:text="Notice"
-            android:textSize="20sp"
-            android:textColor="#fff"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:background="@color/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="53dp" />
-    </LinearLayout>
-    <!-- //end tiltle -->
+            android:orientation="vertical"
+            android:padding="24dp"
+            >
 
-    <!-- Notice -->
-    <LinearLayout
-        android:padding="24dp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:text="Notice"
+                android:textColor="#fff"
+                android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/txtText"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:alpha="0.87"
-            android:gravity="fill_vertical"
-            android:layout_marginBottom="3dp"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
-    </LinearLayout>
-    <!-- Notice -->
+            <TextView
+                android:id="@+id/txtText"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="3dp"
+                android:alpha="0.87"
+                android:gravity="fill_vertical"
+                android:textColor="#000"
+                android:textSize="15sp" />
 
-    <View
-        android:background="#66bdbdbd"
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="53dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:onClick="mOnClose"
+                android:padding="16dp"
+                android:text="확인"
+                android:textColor="#fff"
+                android:textSize="15sp" />
+        </LinearLayout>
 
-    <!-- close -->
-    <LinearLayout
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            android:text="확인"
-            android:textSize="15sp"
-            android:textColor="#fff"
-            android:padding="16dp"
-            android:gravity="center"
-            android:background="@color/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="53dp"
-            android:onClick="mOnClose"/>
-    </LinearLayout>
-    <!--// close -->
-</LinearLayout>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/bf_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/ic_baseline_chevron_left_24"/>
+
+    <Button
+        android:id="@+id/af_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/ic_baseline_chevron_right_24"
+        />
+</RelativeLayout>

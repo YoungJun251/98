@@ -8,8 +8,6 @@ public class postinfo {
     private String publisher;
     private String uri;
     private Date createdate;
-    private String id;
-
 
 
 
@@ -20,7 +18,6 @@ public class postinfo {
         this.publisher = publisher;
         this.uri = uri;
         this.createdate = createdate;
-        this.id = id;
     }
     public String getUri() {
         return uri;
@@ -61,11 +58,5 @@ public class postinfo {
         this.contents = contents;
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 }
