@@ -67,7 +67,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/ic_notify"
                 android:gravity="top|center"
-                android:text="NOTIFY"
+                android:text="NOTICE"
                 android:textColor="@color/colorWhite"
                 android:textSize="20dp"
 
