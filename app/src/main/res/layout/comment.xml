@@ -112,7 +112,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="8"
-            android:hint="comment"></EditText>
+            android:hint="comment"
+            android:background="@color/light_pink"></EditText>
 
         <Button
             android:id="@+id/btn_send"

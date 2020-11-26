@@ -2,6 +2,32 @@
 <resources>
 
     <string-array name="date_year">
+        <item>1980년</item>
+        <item>1981년</item>
+        <item>1982년</item>
+        <item>1983년</item>
+        <item>1984년</item>
+        <item>1985년</item>
+        <item>1986년</item>
+        <item>1987년</item>
+        <item>1988년</item>
+        <item>1989년</item>
+        <item>1990년</item>
+        <item>1991년</item>
+        <item>1992년</item>
+        <item>1993년</item>
+        <item>1994년</item>
+        <item>1995년</item>
+        <item>1996년</item>
+        <item>1997년</item>
+        <item>1998년</item>
+        <item>1999년</item>
+        <item>2000년</item>
+        <item>2001년</item>
+        <item>2002년</item>
+        <item>2003년</item>
+        <item>2004년</item>
+        <item>2005년</item>
         <item>2006년</item>
         <item>2007년</item>
         <item>2008년</item>
@@ -46,6 +72,25 @@
         <item>10일</item>
         <item>11일</item>
         <item>12일</item>
+        <item>13일</item>
+        <item>14일</item>
+        <item>15일</item>
+        <item>16일</item>
+        <item>17일</item>
+        <item>18일</item>
+        <item>19일</item>
+        <item>20일</item>
+        <item>21일</item>
+        <item>22일</item>
+        <item>23일</item>
+        <item>24일</item>
+        <item>25일</item>
+        <item>26일</item>
+        <item>27일</item>
+        <item>28일</item>
+        <item>29일</item>
+        <item>30일</item>
+        <item>31일</item>
     </string-array>
 
 </resources>

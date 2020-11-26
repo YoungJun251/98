@@ -39,7 +39,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="아이디"
-                        android:textColor="@color/zircon"
+                        android:textColor="@color/black"
+                        android:privateImeOptions="defaultInputmode=english"
                         ></EditText>
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,7 +60,8 @@
                         android:inputType="textPassword"
                         android:maxLines="1"
                         android:paddingLeft="5dp"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:privateImeOptions="defaultInputmode=english"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,7 +80,8 @@
                         android:inputType="textPassword"
                         android:maxLines="1"
                         android:paddingLeft="5dp"
-                        android:singleLine="true"/>
+                        android:singleLine="true"
+                        android:privateImeOptions="defaultInputmode=english"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -97,6 +100,7 @@
                         android:singleLine="true"
                         android:hint="이름"
                         android:drawableRight="@drawable/ic_dashing_tag"
+                        android:privateImeOptions="defaultInputmode=korean"
                         />
 
 
