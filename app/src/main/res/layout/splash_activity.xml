@@ -36,7 +36,6 @@
             android:text="단 냥 이"
             android:textColor="@color/pink"
             android:textSize="50dp"
-            android:textStyle="bold"
             />
 
         <ImageView
