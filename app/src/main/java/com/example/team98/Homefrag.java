@@ -93,4 +93,7 @@ public class Homefrag extends Fragment {
         });
         return view;
     }
+
+    private class Notifyactivity {
+    }
 }
