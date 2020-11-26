@@ -41,6 +41,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"></activity>
+        <activity android:name=".Notifyactivity" android:theme="@android:style/Theme.Dialog"></activity>
 
         <provider
             android:authorities="com.example.team98"
